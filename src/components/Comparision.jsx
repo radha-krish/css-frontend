@@ -265,11 +265,16 @@ const Comparison = ({ productId, category }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Image</td>
                   {otherProducts.map(product => (
                     <td key={product._id} className="px-6 py-4 whitespace-nowrap">
+                     <a href={
+                       '/product/$product._id'
+                     }>
+                     
                       <img
                         src={product.imageUrls[0] || 'https://via.placeholder.com/150'}
                         alt={product.name}
                         className="w-32 object-cover rounded"  // Adjust size as needed
                       />
+                     </a>
                     </td>
                   ))}
                 </tr>
