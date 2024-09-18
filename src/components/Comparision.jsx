@@ -266,7 +266,7 @@ const Comparison = ({ productId, category }) => {
                   {otherProducts.map(product => (
                     <td key={product._id} className="px-6 py-4 whitespace-nowrap">
                      <a href={
-                       `/product/${product._id}`
+                       `/product/${product._id}?type=${product.subcategory}`
                      }>
                      
                       <img
