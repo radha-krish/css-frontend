@@ -24,7 +24,7 @@ const Login = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await fetch("http://localhost:3000/api/user/login", {
+            const response = await fetch("https://css-backend-wvn4.onrender.com/api/user/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const Login = () => {
         }
         setIsLoading(true);
         try {
-            const response = await fetch("http://localhost:3000/api/user/send-otp", {
+            const response = await fetch("https://css-backend-wvn4.onrender.com/api/user/send-otp", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

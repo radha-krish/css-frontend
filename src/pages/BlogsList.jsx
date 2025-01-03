@@ -12,7 +12,7 @@ const BlogList = () => {
     // Fetch blogs from API
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/adminBlog/blogs/');
+        const response = await fetch('https://css-backend-wvn4.onrender.com/api/adminBlog/blogs/');
         const result = await response.json();
         if (result.error) {
           // Handle error case

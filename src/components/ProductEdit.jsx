@@ -28,7 +28,7 @@ const ProductEdit = () => {
 
   const fetchProductDetails = async (productId) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/admin/product/${productId}`);
+      const res = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/product/${productId}`);
       const data = await res.json();
       if (!data.error) {
         setFormData({
@@ -121,7 +121,7 @@ const ProductEdit = () => {
     }
 
     try {
-      const url = `http://localhost:3000/api/admin/product/${id}`;
+      const url = `https://css-backend-wvn4.onrender.com/api/admin/product/${id}`;
       const filteredData = {
         ...formData,
         category: formData.category.replace(/\s+/g, ''),

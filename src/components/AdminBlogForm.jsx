@@ -188,7 +188,7 @@ async function onmainchange(e){
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/adminBlog/create', {
+      const response = await fetch('https://css-backend-wvn4.onrender.com/api/adminBlog/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -14,7 +14,7 @@ const BlogDetailed = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/adminBlog/blog/${id}`);
+        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/adminBlog/blog/${id}`);
         const result = await response.json();
         setBlog(result.data);
       } catch (error) {
@@ -46,7 +46,7 @@ const BlogDetailed = () => {
         await navigator.share({
           title: title,
           text: `Check out this blog: ${title}`,
-          url: `http://localhost:3000/blog/${id}`,
+          url: `https://css-backend-wvn4.onrender.com/blog/${id}`,
         });
         toast.success('Blog shared successfully!');
       } catch (error) {
@@ -67,7 +67,7 @@ const BlogDetailed = () => {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={content.substring(0, 150)} />
         <meta property="og:image" content={mainImage} />
-        <meta property="og:url" content={`http://localhost:3000/blog/${id}`} />
+        <meta property="og:url" content={`https://css-backend-wvn4.onrender.com/blog/${id}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={content.substring(0, 150)} />
@@ -80,7 +80,7 @@ const BlogDetailed = () => {
             "@type": "BlogPosting",
             "mainEntityOfPage": {
               "@type": "WebPage",
-              "@id": `http://localhost:3000/blog/${id}`
+              "@id": `https://css-backend-wvn4.onrender.com/blog/${id}`
             },
             "headline": title,
             "description": content.substring(0, 150), // Short description or summary

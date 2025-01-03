@@ -20,7 +20,7 @@ const Home = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/admin/products/categories');
+        const response = await fetch('https://css-backend-wvn4.onrender.com/api/admin/products/categories');
         if (!response.ok) {
           throw new Error('Failed to fetch categories');
         }

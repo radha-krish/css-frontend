@@ -98,7 +98,7 @@ const ProductForm = () => {
         keywords: formData.keywords.filter(keyword => keyword.trim() !== ''),
         imageUrls: formData.imageUrls.filter(url => url.trim() !== ''),
       };
-      const res = await fetch('http://localhost:3000/api/admin/products/create', {
+      const res = await fetch('https://css-backend-wvn4.onrender.com/api/admin/products/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

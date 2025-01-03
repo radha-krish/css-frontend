@@ -12,7 +12,7 @@ const Comparison = ({ productId, category }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/admin/product/${productId}`);
+        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/product/${productId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }
@@ -26,7 +26,7 @@ const Comparison = ({ productId, category }) => {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/admin/products?latest=true&sortBy=${sortBy}&limit=${limit}&category=${encodeURIComponent(category)}`);
+        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/products?latest=true&sortBy=${sortBy}&limit=${limit}&category=${encodeURIComponent(category)}`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }

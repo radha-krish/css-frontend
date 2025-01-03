@@ -23,7 +23,7 @@ const EditBlogForm = () => {
     const fetchBlogData = async () => {
       try {
         const token = localStorage.getItem('admin-token');
-        const response = await fetch(`http://localhost:3000/api/adminBlog/blog/${id}`, {
+        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/adminBlog/blog/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -198,7 +198,7 @@ const EditBlogForm = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/adminBlog/blog/${id}`, {
+      const response = await fetch(`https://css-backend-wvn4.onrender.com/api/adminBlog/blog/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

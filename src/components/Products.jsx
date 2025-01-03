@@ -29,7 +29,7 @@ const Products = ({ category}) => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/admin/products?limit=10&sortBy=adminRating&category=${category}`
+          `https://css-backend-wvn4.onrender.com/api/admin/products?limit=10&sortBy=adminRating&category=${category}`
         );
         if (!response.ok) {
           throw new Error('Network response was not ok');

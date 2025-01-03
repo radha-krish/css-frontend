@@ -26,7 +26,7 @@ const Blogs = ({ keywords, id, title }) => {
     const fetchBlogs = async () => {
       try {
         // Construct the URL with optional parameters
-        let apiUrl = 'http://localhost:3000/api/adminBlog/blogs?limit=8';
+        let apiUrl = 'https://css-backend-wvn4.onrender.com/api/adminBlog/blogs?limit=8';
         if (keywords && keywords.length > 0) {
           apiUrl += `&keywords=${encodeURIComponent(keywords.join(','))}`; // Join the keywords array
         }

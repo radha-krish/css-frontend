@@ -36,7 +36,7 @@ const ContactUs = () => {
     setIsSubmitting(true);
     try {
       // Replace with your actual endpoint
-      const response = await fetch('http://localhost:3000/api/user/contact', {
+      const response = await fetch('https://css-backend-wvn4.onrender.com/api/user/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

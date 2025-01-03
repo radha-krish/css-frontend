@@ -44,7 +44,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/admin/product/${id}?type=${encodeURIComponent(type)}`);
+        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/product/${id}?type=${encodeURIComponent(type)}`);
         const result = await response.json();
         setProduct(result.product);
       } catch (error) {

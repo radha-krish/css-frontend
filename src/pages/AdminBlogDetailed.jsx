@@ -22,7 +22,7 @@ const BlogDetailed = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/adminBlog/blog/${id}`);
+        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/adminBlog/blog/${id}`);
         const result = await response.json();
         setBlog(result.data);
       } catch (error) {
@@ -58,7 +58,7 @@ const BlogDetailed = () => {
 
     if (window.confirm('Are you sure you want to delete this blog?')) {
       try {
-        const res = await fetch(`http://localhost:3000/api/adminBlog/blog/${id}`, {
+        const res = await fetch(`https://css-backend-wvn4.onrender.com/api/adminBlog/blog/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
