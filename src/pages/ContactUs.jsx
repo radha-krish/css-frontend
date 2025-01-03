@@ -3,6 +3,7 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 import Navbar from '../components/Nabbar'; //
 import { toast } from 'react-toastify'; //
 import Footer from '../components/Footer';
+import { Helmet } from 'react-helmet';
 const ContactUs = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -35,7 +36,7 @@ const ContactUs = () => {
     setIsSubmitting(true);
     try {
       // Replace with your actual endpoint
-      const response = await fetch('https://css-backend-wvn4.onrender.com/api/user/contact', {
+      const response = await fetch('http://localhost:3000/api/user/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,9 +56,42 @@ const ContactUs = () => {
       setIsSubmitting(false);
     }
   };
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Cyber Surveillance Services",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Azith Singh Nagar",
+      "addressLocality": "Vijayawada",
+      "addressRegion": "Andhra Pradesh",
+      "postalCode": "520010",
+      "addressCountry": "IN"
+    },
+    "telephone": "+91 9876543210",
+    "email": "info@cybersurveillance.com",
+    "url": "https://www.cybersurveillance.com",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "16.54325",
+      "longitude": "80.64122"
+    },
+    "openingHours": "Mo-Fr 09:00-18:00",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91 9876543210",
+      "contactType": "Customer Service"
+    }
+  };
+
 
   return (
     <div>
+      <Helmet>
+        <title>Contact Us | Cyber Surveillance Services</title>
+        <meta name="description" content="Get in touch with Cyber Surveillance Services for expert CCTV installation and product reviews." />
+        <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+      </Helmet>
       <Navbar />
 
       <div className="bg-gray-100 text-gray-800 py-12">

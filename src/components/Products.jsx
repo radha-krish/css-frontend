@@ -22,14 +22,14 @@ const StarRating = ({ rating }) => {
   );
 };
 
-const Products = ({ category, subcategory }) => {
+const Products = ({ category}) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `https://css-backend-wvn4.onrender.com/api/admin/products?limit=10&sortBy=adminRating&type=${category}`
+          `http://localhost:3000/api/admin/products?limit=10&sortBy=adminRating&category=${category}`
         );
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -57,11 +57,11 @@ const Products = ({ category, subcategory }) => {
       <ToastContainer />
       {products.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold p-4 text-gray-600">{subcategory}</h2>
+          <h2 className="text-xl font-bold p-4 text-gray-600">{category}</h2>
           <div className="flex space-x-4 p-4 overflow-x-auto scrollbar-hide">
             {products.map((product) => (
-              <div key={product._id} className="bg-white transform hover:scale-105 transition-transform duration-300 ease-in-out shadow-md rounded-lg w-64 flex-shrink-0">
-                <img src={product.imageUrls[0]} alt={product.name} className="h-48 w-full object-cover" />
+              <div key={product._id} className="bg-gray-100  mx-5 transform hover:scale-105 transition-transform duration-300 ease-in-out shadow-md rounded-lg w-64 flex-shrink-0">
+                <img src={product.imageUrls[0]} alt={product.name} className="h-48 w-full object-cover mix-blend-multiply" />
                 <div className="p-4">
                   <h3 className="text-lg font-bold">{truncateDescription(product.name, 16)}</h3>
                   <p className="text-gray-700">{truncateDescription(product.description, 20)}</p>
@@ -70,7 +70,7 @@ const Products = ({ category, subcategory }) => {
                     <StarRating rating={product.adminRating} />
                   </div>
                   <Link
-                    to={`/product/${product._id}?type=${product.subcategory}`}
+                    to={`/product/${product._id}`}
                     className="block mt-4 text-center bg-gray-800 text-white py-2 rounded-lg hover:bg-blue-700 transition"
                   >
                     View Details

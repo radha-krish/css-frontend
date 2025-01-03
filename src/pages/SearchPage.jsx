@@ -3,7 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { AiOutlineShareAlt } from 'react-icons/ai'; // Import the share icon
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from '../components/Nabbar'; // Correct the import path for Navbar
+import Navbar from '../components/Nabbar'; 
+import { useNavigate } from 'react-router-dom';
+import ProductListPage from '../pages/ProductListPage'
+
+
 
 // StarRating Component
 const StarRating = ({ rating }) => {
@@ -12,6 +16,8 @@ const StarRating = ({ rating }) => {
   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
   return (
+<div>
+
     <div className="flex items-center">
       {Array(fullStars).fill().map((_, i) => (
         <span key={`full-${i}`} className="text-yellow-500 text-xl">★</span>
@@ -21,6 +27,7 @@ const StarRating = ({ rating }) => {
         <span key={`empty-${i}`} className="text-gray-300 text-xl">★</span>
       ))}
     </div>
+    </div>
   );
 };
 
@@ -29,6 +36,15 @@ const SearchPage = () => {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation(); // Access the location object to get query parameters
+    const navigate = useNavigate();
+
+const handleSearch = (e) => {
+  e.preventDefault();
+
+  if (searchQuery.trim()) {
+    navigate(`/product/search?keyword=${encodeURIComponent(searchQuery.replace(" ",""))}`);
+  }
+};
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -38,7 +54,7 @@ const SearchPage = () => {
     if (keyword) {
       const fetchProducts = async () => {
         try {
-          const response = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/products/search?keyword=${encodeURIComponent(keyword)}`);
+          const response = await fetch(`http://localhost:3000/api/admin/products/search?keyword=${encodeURIComponent(keyword)}`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -63,16 +79,53 @@ const SearchPage = () => {
   };
 
   const handleShare = (product) => {
-    const shareUrl = `${window.location.origin}/product/${product._id}?type=${product.subcategory}`;
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      toast.info('Product link copied to clipboard!');
-    });
+    const shareUrl = `${window.location.origin}/product/${product._id}`;
+  
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out this product: ${product.name}`,
+        url: shareUrl
+      })
+      .then(() => {
+        toast.info('Product shared successfully!');
+      })
+      .catch((error) => {
+        console.error('Error sharing product:', error);
+        toast.error('Failed to share the product.');
+      });
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        toast.info('Product link copied to clipboard!');
+      });
+    }
   };
 
   return (
+    
     <div>
       <Navbar />
-      <div className="container mx-auto p-4">
+      <form onSubmit={handleSearch} className=" mt-10 flex  md:hidden  flex-grow mx-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search products..."
+            className="w-full max-w-xs px-3 py-1 rounded-l-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-600"
+          />
+          <button
+            type="submit"
+            className="bg-gray-600 text-white px-4 py-1 rounded-r-md hover:bg-gray-700"
+          >
+            Search
+          </button>
+        </form>
+       { searchQuery === '' ? (
+  // If search query is empty, show ProductList
+  <ProductListPage navbar={false} />
+) :
+      (<div className="container mx-auto p-4">
         <ToastContainer />
         <h1 className="text-2xl font-bold mb-4">Search Results for "{searchQuery}"</h1>
 
@@ -87,12 +140,12 @@ const SearchPage = () => {
                   <h2 className="text-lg font-bold">{truncateDescription(product.name, 16)}</h2>
                   <p className="text-gray-700">{truncateDescription(product.description, 20)}</p>
                   <div className="flex justify-between items-center mt-2">
-                    <p className="text-green-600 font-semibold">${product.price}</p>
+                    <p className="text-green-600 font-semibold">₹{product.price}</p>
                     <StarRating rating={product.adminRating} />
                   </div>
                   <div className="flex justify-between items-center mt-4">
                     <Link
-                      to={`/product/${product._id}?type=${product.subcategory}`}
+                      to={`/product/${product._id}`}
                       className="block text-center bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition"
                     >
                       View Details
@@ -110,8 +163,10 @@ const SearchPage = () => {
             ))}
           </div>
         )}
-      </div>
+      </div>)}
     </div>
+
+      
   );
 };
 

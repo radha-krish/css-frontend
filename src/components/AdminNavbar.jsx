@@ -49,7 +49,7 @@ const Navbar = () => {
 
         {/* Navigation options for medium and larger screens */}
         <div className="hidden md:flex space-x-6">
-          <Link to="/" className="text-white hover:text-gray-300">
+          <Link to="/admin" className="text-white hover:text-gray-300">
             Home
           </Link>
           <Link to="/admin/products" className="text-white hover:text-gray-300">
@@ -96,7 +96,7 @@ const Navbar = () => {
             </button>
           </div>
           <div className="mt-8 space-y-4">
-            <Link to="/" className="block text-white py-2 pl-4">
+            <Link to="/admin" className="block text-white py-2 pl-4">
               Home
             </Link>
             <Link to="/admin/products" className="block text-white py-2 pl-4">

@@ -3,9 +3,7 @@ import { FaVideo } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  function CCTVIcon() {
-    return <FaVideo size={40} color="white" />;
-  }
+  const CCTVIcon = () => <FaVideo size={40} color="white" />;
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,23 +22,21 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gray-800 p-4 sticky top-0 z-10">
-      <div className="container mx-auto flex items-center justify-between md:pr-[2rem]">
+      <div className="container mx-auto flex items-center justify-between md:pr-8">
         {/* Logo and Name */}
         <div className="flex items-center">
-          <div className="text-white text-xl font-bold">
-            {CCTVIcon()}
-          </div>
+          <div className="text-white text-xl font-bold">{CCTVIcon()}</div>
           <div className="text-white ml-2 text-xl">CSS</div>
         </div>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearch} className="hidden md:flex flex-grow ml-72">
+        <form onSubmit={handleSearch} className="hidden md:flex flex-grow mx-4">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search products..."
-            className="w-96 px-3 py-1 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600"
+            className="w-full max-w-xs px-3 py-1 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600"
           />
           <button
             type="submit"
@@ -74,40 +70,25 @@ const Navbar = () => {
         </div>
 
         {/* Navigation options for medium and larger screens */}
-        <div className="hidden md:flex space-x-6">
-          <Link to="/" className="text-white hover:text-gray-300">
-            Home
-          </Link>
-          <Link to="/products" className="text-white hover:text-gray-300">
-            Products
-          </Link>
-          <Link to="/blogs" className="text-white hover:text-gray-300">
-           Blogs
-          </Link>
-          <Link to="/contactus" className="text-white hover:text-gray-300">
-           Contact Us
-          </Link>
+        <div className="hidden md:flex space-x-4">
+          <Link to="/" className="text-white hover:text-gray-300">Home</Link>
+          <Link to="/products" className="text-white hover:text-gray-300">Products</Link>
+          <Link to="/blogs" className="text-white hover:text-gray-300">Blogs</Link>
+          <Link to="/contactus" className="text-white hover:text-gray-300">Contact Us</Link>
         </div>
       </div>
 
       {/* Side Drawer for small screens */}
       <div
-        className={`fixed inset-0 z-50 bg-gray-900 bg-opacity-50 transition-opacity ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`fixed inset-0 z-50 bg-gray-900 bg-opacity-50 transition-opacity ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={toggleMenu}
       >
         <div
-          className={`fixed inset-y-0 left-0 w-64 bg-gray-800 transform ${
-            isOpen ? 'translate-x-0' : '-translate-x-full'
-          } transition-transform`}
+          className={`fixed inset-y-0 left-0 w-64 bg-gray-800 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-4">
-            <button
-              onClick={toggleMenu}
-              className="text-white focus:outline-none"
-            >
+            <button onClick={toggleMenu} className="text-white focus:outline-none">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -125,18 +106,14 @@ const Navbar = () => {
             </button>
           </div>
           <div className="mt-8 space-y-4">
-            <Link to="/" className="block text-white py-2 pl-4">
-              Home
-            </Link>
-            <Link to="/products" className="block text-white py-2 pl-4">
-              Products
-            </Link>
-            <Link to="/blogs" className="block text-white py-2 pl-4">
-              Blogs
-            </Link>
-            <Link to="/contactus" className="block text-white py-2 pl-4">
-           Contact Us
-          </Link>
+            <Link to="/" className="block text-white py-2 pl-4">Home</Link>
+            <Link to="/products" className="block text-white py-2 pl-4">Products</Link>
+            <Link to={`/product/search`} className="block text-white py-2 pl-4"> Search Products</Link>
+
+
+            <Link to="/blogs" className="block text-white py-2 pl-4">Blogs</Link>
+            <Link to="/contactus" className="block text-white py-2 pl-4">Contact Us</Link>
+
           </div>
         </div>
       </div>

@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AiOutlineShareAlt } from 'react-icons/ai'; // Import the share icon
+
 import Comparision from '../components/Comparision'
 import Navbar from '../components/Nabbar';
+import { FacebookShareButton, WhatsappShareButton } from 'react-share';
+import { FacebookIcon, WhatsappIcon } from 'react-share';
 import { Helmet } from 'react-helmet';
 const ProductDetails = () => {
   const { id } = useParams();
@@ -14,11 +18,33 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State to manage popup visibility
-
+  const handleShare = (product) => {
+    const shareUrl = `${window.location.origin}/product/${product._id}`;
+  
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out this product: ${product.name} \n\n ${product.description} `,
+        url: shareUrl
+      })
+      .then(() => {
+        toast.info('Product shared successfully!');
+      })
+      .catch((error) => {
+        console.error('Error sharing product:', error);
+        toast.error('Failed to share the product.');
+      });
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        toast.info('Product link copied to clipboard!');
+      });
+    }
+  };
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/product/${id}?type=${encodeURIComponent(type)}`);
+        const response = await fetch(`http://localhost:3000/api/admin/product/${id}?type=${encodeURIComponent(type)}`);
         const result = await response.json();
         setProduct(result.product);
       } catch (error) {
@@ -52,67 +78,68 @@ const ProductDetails = () => {
   if (!product) return <p className="text-center text-gray-600">Loading...</p>;
 
   const {
+    category,
+    subcategory,
+    keywords=[],
     company,
-    resolution,
-    connectivity,
-    storage,
-    opticalZoom,
-    nightVisionRange,
-    formFactor,
-    audio,
-    fieldOfView,
-    photoSensorTechnology,
-    waterResistance,
-    operatingSystem,
-    mountingType,
-    videoCaptureResolution,
-    colour,
-    afiliateLink,
-    numberOfItems,
-    includedComponents,
-    numberOfChannels,
-    remoteAccess,
-    recordingModes,
-    compressionFormats,
-    integration,
-    audioSupport,
-    alarmInputsOutputs,
-    playbackFeatures,
-    length,
-    material,
-    compatibility,
-    shielding,
-    weightCapacity,
-    installationEase,
-    numberOfCameras,
-    storageCapacity,
-    accessoriesIncluded,
-    installationType,
-    cameraTypes,
-    customizationOptions,
-    installationInstructions,
+    affiliateLink,
     pros,
     cons,
     adminRating,
     adminReview,
     name,
     description,
-    imageUrls
+    price,
+    imageUrls,
+    features
   } = product;
+
 
   return (
     <div>
-       <Helmet>
+      <Helmet>
         <title>{name} - {company}</title>
         <meta name="description" content={description} />
+        <meta name="keywords" content={keywords.join("")} /> {/* SEO keywords */}
+        <meta name="keywords" content={subcategory} /> {/* SEO keywords */}
+        <meta name="keywords" content={category} /> {/* SEO keywords */}
+
+
         <meta property="og:title" content={`${name} - ${company}`} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={imageUrls && imageUrls[0]} />
-        <meta property="og:url" content={`https://css-backend-wvn4.onrender.com/product/${id}?type=${encodeURIComponent(type)}`} />
+        <meta property="og:url" content={`${window.location.href}`} />
+        <meta property="og:type" content="website" />
+
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${name} - ${company}`} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={imageUrls && imageUrls[0]} />
+
+        {/* Structured data for category and subcategory */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            name: name,
+            description: description,
+            category: category,
+            subCategory: subcategory || "", // Include subCategory if available
+            brand: company,
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "USD", // You can adjust this based on your currency
+              price: price,
+              itemCondition: "https://schema.org/NewCondition",
+              availability: "https://schema.org/InStock",
+              seller: {
+                "@type": "Organization",
+                name: company,
+              },
+            },
+            image: imageUrls,
+          })}
+        </script>
       </Helmet>
 <Navbar/>
    
@@ -128,7 +155,7 @@ const ProductDetails = () => {
                 src={imageUrls[currentIndex]}
                 alt={`Product Image ${currentIndex + 1}`}
                 className="w-full h-full object-cover cursor-pointer"
-                onClick={handleImageClick}
+                onMouseEnter={handleImageClick}
               />
             ) : (
               <img
@@ -163,46 +190,24 @@ const ProductDetails = () => {
             <p className="text-gray-700 italic">{adminReview}</p>
           </div>
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-2 text-gray-800">Features</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {resolution && <div><strong className="text-gray-800">Resolution:</strong> {resolution}</div>}
-              {connectivity && <div><strong className="text-gray-800">Connectivity:</strong> {connectivity}</div>}
-              {storage && <div><strong className="text-gray-800">Storage:</strong> {storage}</div>}
-              {opticalZoom && <div><strong className="text-gray-800">Optical Zoom:</strong> {opticalZoom}</div>}
-              {nightVisionRange && <div><strong className="text-gray-800">Night Vision Range:</strong> {nightVisionRange}</div>}
-              {formFactor && <div><strong className="text-gray-800">Form Factor:</strong> {formFactor}</div>}
-              {audio && <div><strong className="text-gray-800">Audio:</strong> {audio}</div>}
-              {fieldOfView && <div><strong className="text-gray-800">Field of View:</strong> {fieldOfView}</div>}
-              {photoSensorTechnology && <div><strong className="text-gray-800">Photo Sensor Technology:</strong> {photoSensorTechnology}</div>}
-              {waterResistance && <div><strong className="text-gray-800">Water Resistance:</strong> {waterResistance}</div>}
-              {operatingSystem && <div><strong className="text-gray-800">Operating System:</strong> {operatingSystem}</div>}
-              {mountingType && <div><strong className="text-gray-800">Mounting Type:</strong> {mountingType}</div>}
-              {videoCaptureResolution && <div><strong className="text-gray-800">Video Capture Resolution:</strong> {videoCaptureResolution}</div>}
-              {colour && <div><strong className="text-gray-800">Colour:</strong> {colour}</div>}
-              {numberOfItems && <div><strong className="text-gray-800">Number of Items:</strong> {numberOfItems}</div>}
-              {includedComponents && <div><strong className="text-gray-800">Included Components:</strong> {includedComponents.join(', ')}</div>}
-              {numberOfChannels && <div><strong className="text-gray-800">Number of Channels:</strong> {numberOfChannels}</div>}
-              {remoteAccess && <div><strong className="text-gray-800">Remote Access:</strong> {remoteAccess}</div>}
-              {recordingModes && <div><strong className="text-gray-800">Recording Modes:</strong> {recordingModes}</div>}
-              {compressionFormats && <div><strong className="text-gray-800">Compression Formats:</strong> {compressionFormats}</div>}
-              {integration && <div><strong className="text-gray-800">Integration:</strong> {integration}</div>}
-              {audioSupport && <div><strong className="text-gray-800">Audio Support:</strong> {audioSupport ? 'Yes' : 'No'}</div>}
-              {alarmInputsOutputs && <div><strong className="text-gray-800">Alarm Inputs/Outputs:</strong> {alarmInputsOutputs}</div>}
-              {playbackFeatures && <div><strong className="text-gray-800">Playback Features:</strong> {playbackFeatures}</div>}
-              {length && <div><strong className="text-gray-800">Length:</strong> {length}</div>}
-              {material && <div><strong className="text-gray-800">Material:</strong> {material}</div>}
-              {shielding && <div><strong className="text-gray-800">Shielding:</strong> {shielding}</div>}
-              {weightCapacity && <div><strong className="text-gray-800">Weight Capacity:</strong> {weightCapacity}</div>}
-              {installationEase && <div><strong className="text-gray-800">Installation Ease:</strong> {installationEase}</div>}
-              {numberOfCameras && <div><strong className="text-gray-800">Number of Cameras:</strong> {numberOfCameras}</div>}
-              {storageCapacity && <div><strong className="text-gray-800">Storage Capacity:</strong> {storageCapacity}</div>}
-              {accessoriesIncluded && <div><strong className="text-gray-800">Accessories Included:</strong> {accessoriesIncluded.join(', ')}</div>}
-              {installationType && <div><strong className="text-gray-800">Installation Type:</strong> {installationType}</div>}
-              {cameraTypes && <div><strong className="text-gray-800">Camera Types:</strong> {cameraTypes.join(', ')}</div>}
-              {customizationOptions && <div><strong className="text-gray-800">Customization Options:</strong> {customizationOptions.join(', ')}</div>}
-              {installationInstructions && <div><strong className="text-gray-800">Installation Instructions:</strong> {installationInstructions}</div>}
-            </div>
-          </div>
+        <h2 className="text-2xl font-semibold mb-2 text-gray-800">Features</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {features && features.length > 0 ? (
+            features.map((feature) => (
+              <div key={feature._id}>
+               {feature.featureName && (
+  <div>
+    <strong className="text-gray-800">{feature.featureName}:</strong> {feature.featureValue}
+  </div>
+)}
+
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600">No features listed.</p>
+          )}
+        </div>
+      </div>
           {/* Pros and Cons */}
           <div className="mb-4">
             <h2 className="text-2xl font-semibold mb-2 text-gray-800">Pros & Cons</h2>
@@ -230,24 +235,35 @@ const ProductDetails = () => {
             </div>
           </div>
           {/* Affiliate Link */}
-          {afiliateLink && (
+          {affiliateLink && (
             <div className="mb-4">
-              <a href={afiliateLink} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-700">
+              <a href={affiliateLink} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-700">
                 Buy on Affiliate Store
               </a>
             </div>
           )}
+           <button
+                  onClick={() => handleShare(product)}
+                  className="bg-green-600 p-2 flex rounded-md text-xl text-white hover:bg-gray-300 transition"
+                  aria-label="Share"
+                > Share 
+                  <AiOutlineShareAlt className="w-6 h-6 text-gray-100" />
+                </button>
+
+     
         </div>
       </div>
+     
 
       {/* Popup Modal */}
       {isPopupOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
-          <div className="relative max-w-4xl max-h-4xl">
+          <div className="relative w-[90%] h-[85%]">
             <img
               src={imageUrls[currentIndex]}
+             
               alt={`Product Image ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-cover rounded-lg shadow-lg"
+              className="w-full h-full m-auto  object-contain rounded-lg shadow-lg  "
             />
             <button
               onClick={handleClosePopup}
@@ -270,7 +286,7 @@ const ProductDetails = () => {
           </div>
         </div>
       )}
-      <Comparision productId={id} category={type}/>
+      <Comparision productId={id} category={category}/>
     </div>
     </div>
   );

@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../components/Nabbar';
 import { Helmet } from 'react-helmet';
 import Footer from '../components/Footer'
+import { FacebookShareButton, WhatsappShareButton } from 'react-share';
+import { FacebookIcon, WhatsappIcon } from 'react-share';
 // StarRating Component
 const StarRating = ({ rating }) => {
   const fullStars = Math.floor(rating);
@@ -25,19 +27,22 @@ const StarRating = ({ rating }) => {
   );
 };
 
-// AdminProductLists Component
-const ProductLists = () => {
+// ProductLists Component
+const ProductLists = ({navbar}) => {
   const [products, setProducts] = useState([]);
   const [sortBy, setSortBy] = useState('');
   const [limit, setLimit] = useState('');
   const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]); 
   const [showModal, setShowModal] = useState(false);
+  const [subCategory, setSubCategory] = useState('');
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `https://css-backend-wvn4.onrender.com/api/admin/products?latest=true&sortBy=${sortBy}&limit=${limit}&type=${category}`
+          `http://localhost:3000/api/admin/products?latest=true&sortBy=${sortBy}&limit=${limit}&category=${category}&subcategory=${subCategory}`
         );
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -52,7 +57,26 @@ const ProductLists = () => {
     };
 
     fetchProducts();
-  }, [sortBy, limit, category]);
+  }, [sortBy, limit, category,subCategory]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/admin/products/categories');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const res = await response.json();
+        setCategories(res.categories); // Assuming the backend returns { categories: [] }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to fetch categories. Please try again later.');
+      }
+    };
+
+    fetchCategories();
+  }, [])
+
 
   const truncateDescription = (description, length) => {
     if (description.length > length) {
@@ -66,6 +90,11 @@ const ProductLists = () => {
     toast.info('Filters applied.');
   };
 
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    setSubCategory(''); // Reset subcategory when category changes
+};
   const removeFilters = () => {
     setSortBy('');
     setLimit('');
@@ -75,17 +104,36 @@ const ProductLists = () => {
   };
 
   const handleShare = (product) => {
-    // Logic for sharing product details, e.g., opening a share dialog or copying a link
-    const shareUrl = `${window.location.origin}/product/${product._id}?type=${product.subcategory}`;
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      toast.info('Product link copied to clipboard!');
-    });
+    const shareUrl = `${window.location.origin}/product/${product._id}`;
+  
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out this product: ${product.name} \n\n ${product.description} `,
+        url: shareUrl
+      })
+      .then(() => {
+        toast.info('Product shared successfully!');
+      })
+      .catch((error) => {
+        console.error('Error sharing product:', error);
+        toast.error('Failed to share the product.');
+      });
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        toast.info('Product link copied to clipboard!');
+      });
+    }
   };
+  
 
   return (
     <div>
        <Helmet>
         <title>Product Listings -Css</title>
+        <meta name="keywords" content="CCTV blogs, surveillance blogs, security systems, security technology , cctvcameras" />
+
         <meta name="description" content="Browse our wide range of products, including cameras, systems, and accessories. Filter by category, price, and rating to find the perfect product for your needs." />
         <meta property="og:title" content="Product Listings - Cyber Security Survillance" />
         <meta property="og:description" content="Browse our wide range of products, including cameras, systems, and accessories. Filter by category, price, and rating to find the perfect product for your needs." />
@@ -94,17 +142,23 @@ const ProductLists = () => {
         <meta name="twitter:title" content="Product Listings - Cyber Security Survillance" />
         <meta name="twitter:description" content="Browse our wide range of products, including cameras, systems, and accessories. Filter by category, price, and rating to find the perfect product for your needs." />
       </Helmet>
-    <Navbar/>
+   {navbar && <Navbar/> } 
     <div className="container mx-auto p-4">
       <ToastContainer />
       <h1 className="text-2xl font-bold mb-4">Product Listing</h1>
 
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
+     
+
+
+      <div className=' bg-slate-300 inline-block  rounded-lg items-end fixed top-20 right-5 z-10  '>
+      <button 
+        className="bg-orange-500 text-slate-100 px-4 py-2 rounded font-semibold italic text-xl hover:bg-gray-700 transition  "
         onClick={() => setShowModal(true)}
-      >
-        Filter
+        >
+        Apply  Filter
       </button>
+        </div>
+  
 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -136,18 +190,21 @@ const ProductLists = () => {
 
             <div className="mb-4">
               <label className="block mb-2">Category:</label>
-              <select value={category} onChange={(e) => setCategory(e.target.value)} className="p-2 border rounded w-full">
+              <select value={category} onChange={handleCategoryChange} className="p-2 border rounded w-full">
                 <option value="">All Categories</option>
-                <option value="DomeCameras">Dome Cameras</option>
-                <option value="BulletCameras">Bullet Cameras</option>
-                <option value="WeatherproofCameras">Weatherproof Cameras</option>
-                <option value="PTZCameras">PTZ Cameras</option>
-                <option value="NVRSystems">NVR Systems</option>
-                <option value="DVRSystems">DVR Systems</option>
-                <option value="MountsBrackets">Mounts & Brackets</option>
-                <option value="CablesConnectors">Cables & Connectors</option>
-                <option value="CompleteSurveillanceKits">Complete Surveillance Kits</option>
-                <option value="DIYKits">DIY Kits</option>
+                {Object.keys(categories).map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block mb-2">Sub Category:</label>
+              <select value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="p-2 border rounded w-full">
+                <option value="">All Sub Categories</option>
+                {category && categories[category] && categories[category].map((subcat) => (
+                  <option key={subcat} value={subcat}>{subcat}</option>
+                ))}
               </select>
             </div>
 
@@ -175,22 +232,25 @@ const ProductLists = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-y-20 gap-x-5 mt-6">
         {products.map((product) => (
-          <div key={product._id} className="bg-white shadow-md rounded-lg overflow-hidden  transform hover:scale-105 transition-transform duration-300 ease-in-out ">
-            <img src={product.imageUrls[0]} alt={product.name} className="h-48 w-full object-cover" />
+          <div key={product._id} className="bg-gray-100 shadow-md rounded-lg overflow-hidden  transform hover:scale-105 transition-transform duration-300 ease-in-out ">
+            <Link to={`/product/${product._id}`}>
+            <img src={product.imageUrls[0]} alt={product.name} className="h-48 w-full object-contain mix-blend-multiply" />
+            </Link>
+
             <div className="p-4">
               <h2 className="text-lg font-bold"> {truncateDescription(product.name, 16)}</h2>
               <p className="text-gray-700">
                 {truncateDescription(product.description, 20)}
               </p>
               <div className="flex justify-between items-center mt-2">
-                <p className="text-green-600 font-semibold">${product.price}</p>
+                <p className="text-green-600 font-semibold">₹{product.price}</p>
                 <StarRating rating={product.adminRating} />
               </div>
               <div className="flex justify-between items-center mt-4">
                 <Link
-                  to={`/product/${product._id}?type=${product.subcategory}`}
+                  to={`/product/${product._id}`}
                   className="block text-center bg-gray-800 text-white p-2 rounded-lg hover:bg-blue-700 transition"
                 >
                   View Details

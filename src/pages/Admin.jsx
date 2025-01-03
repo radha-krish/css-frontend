@@ -65,7 +65,7 @@ const Admin = () => {
       {/* Product Modal */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50  ">
-          <div className="bg-gray-100 rounded-lg p-8 w-full max-w-4xl mx-auto shadow-lg relative max-h-full">
+          <div className="bg-gray-100 rounded-lg md:p-8 w-full max-w-4xl mx-auto shadow-lg relative max-h-full">
             <button
               onClick={toggleFormVisibility}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
@@ -73,7 +73,7 @@ const Admin = () => {
               &times;
             </button>
             <div className="max-h-screen overflow-y-auto p-4 mb-4">
-              <ProductForm />
+              <ProductForm  edit={true} id={"66eef016379e329f4f066198"}/>
             </div>
           </div>
         </div>

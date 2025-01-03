@@ -10,7 +10,7 @@ const Carousel = ({ images }) => {
     }, 3000); // Change slide every 3 seconds
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [currentIndex]);
+  }, [currentIndex]); // Add currentIndex to the dependency array
 
   const handleNextClick = () => {
     const isLastSlide = currentIndex === images.length - 1;
@@ -24,17 +24,17 @@ const Carousel = ({ images }) => {
       <div className="overflow-hidden">
         <div
           className="flex transition-transform duration-300 ease-in-out"
-          style={{ transform: `translateX(-${currentIndex * 96}px)` }} // Adjusted for fixed width
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }} // Dynamically adjust width for each slide
         >
           {images.map((image, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-96" // Fixed width for each image container
+              className="flex-shrink-0 w-full" // Make width dynamic
             >
               <img
                 src={image}
                 alt={`Slide ${index + 1}`}
-                className="w-full object-cover h-64 md:h-[400px]" // Adjust height as needed
+                className="w-full object-cover md:object-contain h-64 md:h-[400px]" // Adjust height as needed
               />
             </div>
           ))}

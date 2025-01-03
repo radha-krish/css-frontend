@@ -3,6 +3,8 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ProductEdit from './components/ProductEdit';
+import AdminNavbar from './components/AdminNavbar';
 
 const AdminProductDetails = () => {
   const { id } = useParams();
@@ -13,14 +15,22 @@ const AdminProductDetails = () => {
 
   const [product, setProduct] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isEditVisible, setIsEditVisible] = useState(false);
+
+  const toggleFormVisibility = () => {
+    setIsEditVisible((prev) => !prev);
+  };
+
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/product/${id}?type=${encodeURIComponent(type)}`);
+        const response = await fetch(`http://localhost:3000/api/admin/product/${id}`);
         const result = await response.json();
         setProduct(result.product);
+        console.log(result)
       } catch (error) {
+
         console.error('Error fetching product:', error);
       }
     };
@@ -73,7 +83,7 @@ const AdminProductDetails = () => {
 
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const res = await fetch(`https://css-backend-wvn4.onrender.com/api/admin/product/${id}?type=${encodeURIComponent(type)}`, {
+        const res = await fetch(`http://localhost:3000/api/admin/product/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`, // Add Authorization header with token
@@ -101,54 +111,22 @@ const AdminProductDetails = () => {
 
   const {
     company,
-    resolution,
-    connectivity,
-    storage,
-    opticalZoom,
-    nightVisionRange,
-    formFactor,
-    audio,
-    fieldOfView,
-    photoSensorTechnology,
-    waterResistance,
-    operatingSystem,
-    mountingType,
-    videoCaptureResolution,
-    colour,
-    afiliateLink,
-    numberOfItems,
-    includedComponents,
-    numberOfChannels,
-    remoteAccess,
-    recordingModes,
-    compressionFormats,
-    integration,
-    audioSupport,
-    alarmInputsOutputs,
-    playbackFeatures,
-    length,
-    material,
-    compatibility,
-    shielding,
-    weightCapacity,
-    installationEase,
-    numberOfCameras,
-    storageCapacity,
-    accessoriesIncluded,
-    installationType,
-    cameraTypes,
-    customizationOptions,
-    installationInstructions,
+    affiliateLink,
     pros,
     cons,
     adminRating,
     adminReview,
     name,
     description,
-    imageUrls
+    price,
+    imageUrls,
+    features
   } = product;
 
   return (
+    <div>
+      <AdminNavbar/>
+
     <div className="container mx-auto p-4 md:p-8 lg:p-12">
       <ToastContainer />
       <div className="flex flex-col lg:flex-row lg:space-x-8">
@@ -194,58 +172,39 @@ const AdminProductDetails = () => {
             <h2 className="text-xl font-semibold text-gray-800">Admin Rating: {adminRating}/5</h2>
             <p className="text-gray-700 italic">{adminReview}</p>
           </div>
+          {/* price */}
+          <div className="mb-4 flex gap-1">
+            <h2 className="text-xl font-semibold text-gray-800">Price: </h2>
+            <h2 className="text-blue-950 font-semibold italic text-xl">{price}</h2>
+          </div>
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-2 text-gray-800">Features</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {resolution && <div><strong className="text-gray-800">Resolution:</strong> {resolution}</div>}
-              {connectivity && <div><strong className="text-gray-800">Connectivity:</strong> {connectivity}</div>}
-              {storage && <div><strong className="text-gray-800">Storage:</strong> {storage}</div>}
-              {opticalZoom && <div><strong className="text-gray-800">Optical Zoom:</strong> {opticalZoom}</div>}
-              {nightVisionRange && <div><strong className="text-gray-800">Night Vision Range:</strong> {nightVisionRange}</div>}
-              {formFactor && <div><strong className="text-gray-800">Form Factor:</strong> {formFactor}</div>}
-              {audio && <div><strong className="text-gray-800">Audio:</strong> {audio}</div>}
-              {fieldOfView && <div><strong className="text-gray-800">Field of View:</strong> {fieldOfView}</div>}
-              {photoSensorTechnology && <div><strong className="text-gray-800">Photo Sensor Technology:</strong> {photoSensorTechnology}</div>}
-              {waterResistance && <div><strong className="text-gray-800">Water Resistance:</strong> {waterResistance}</div>}
-              {operatingSystem && <div><strong className="text-gray-800">Operating System:</strong> {operatingSystem}</div>}
-              {mountingType && <div><strong className="text-gray-800">Mounting Type:</strong> {mountingType}</div>}
-              {videoCaptureResolution && <div><strong className="text-gray-800">Video Capture Resolution:</strong> {videoCaptureResolution}</div>}
-              {colour && <div><strong className="text-gray-800">Colour:</strong> {colour}</div>}
-              {numberOfItems && <div><strong className="text-gray-800">Number of Items:</strong> {numberOfItems}</div>}
-              {includedComponents && <div><strong className="text-gray-800">Included Components:</strong> {includedComponents.join(', ')}</div>}
-              {numberOfChannels && <div><strong className="text-gray-800">Number of Channels:</strong> {numberOfChannels}</div>}
-              {remoteAccess && <div><strong className="text-gray-800">Remote Access:</strong> {remoteAccess}</div>}
-              {recordingModes && <div><strong className="text-gray-800">Recording Modes:</strong> {recordingModes}</div>}
-              {compressionFormats && <div><strong className="text-gray-800">Compression Formats:</strong> {compressionFormats}</div>}
-              {integration && <div><strong className="text-gray-800">Integration:</strong> {integration}</div>}
-              {audioSupport && <div><strong className="text-gray-800">Audio Support:</strong> {audioSupport ? 'Yes' : 'No'}</div>}
-              {alarmInputsOutputs && <div><strong className="text-gray-800">Alarm Inputs/Outputs:</strong> {alarmInputsOutputs}</div>}
-              {playbackFeatures && <div><strong className="text-gray-800">Playback Features:</strong> {playbackFeatures}</div>}
-              {length && <div><strong className="text-gray-800">Length:</strong> {length}</div>}
-              {material && <div><strong className="text-gray-800">Material:</strong> {material}</div>}
-              {compatibility && <div><strong className="text-gray-800">Compatibility:</strong> {compatibility}</div>}
-              {shielding && <div><strong className="text-gray-800">Shielding:</strong> {shielding}</div>}
-              {weightCapacity && <div><strong className="text-gray-800">Weight Capacity:</strong> {weightCapacity}</div>}
-              {installationEase && <div><strong className="text-gray-800">Installation Ease:</strong> {installationEase}</div>}
-              {numberOfCameras && <div><strong className="text-gray-800">Number of Cameras:</strong> {numberOfCameras}</div>}
-              {storageCapacity && <div><strong className="text-gray-800">Storage Capacity:</strong> {storageCapacity}</div>}
-              {accessoriesIncluded && <div><strong className="text-gray-800">Accessories Included:</strong> {accessoriesIncluded.join(', ')}</div>}
-              {installationType && <div><strong className="text-gray-800">Installation Type:</strong> {installationType}</div>}
-              {cameraTypes && <div><strong className="text-gray-800">Camera Types:</strong> {cameraTypes.join(', ')}</div>}
-              {customizationOptions && <div><strong className="text-gray-800">Customization Options:</strong> {customizationOptions.join(', ')}</div>}
-              {installationInstructions && <div><strong className="text-gray-800">Installation Instructions:</strong> {installationInstructions}</div>}
-            </div>
+            <h2 className="text-2xl  mb-2 text-gray-800">Features</h2>
               
           {/* Affiliate Link */}
-          {afiliateLink && (
+          {affiliateLink && (
             <div className="mb-4 flex gap-10 ">
               {/* <h2 className="text-xl font-semibold text-gray-800">Affiliate Link</h2> */}
-              <a href={afiliateLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+              <a href={affiliateLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
                 Buy Now
               </a>
             </div>
           )}
           </div>
+          {/* features */}
+          <div className="mb-8">
+        <h2 className="text-2xl font-semibold mb-2 text-gray-800">Features</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {features && features.length > 0 ? (
+            features.map((feature) => (
+              <div key={feature._id}>
+                <strong className="text-gray-800">{feature.featureName}:</strong> {feature.featureValue}
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600">No features listed.</p>
+          )}
+        </div>
+      </div>
 
           <div className="mb-8">
             <h2 className="text-2xl font-semibold mb-2 text-gray-800">Pros and Cons</h2>
@@ -289,9 +248,32 @@ const AdminProductDetails = () => {
             >
               Delete
             </button>
+            <button
+              onClick={toggleFormVisibility}
+              className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-red-600"
+            >
+              Edit
+            </button>
           </div>
         </div>
       </div>
+      {isEditVisible && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50  ">
+          <div className="bg-gray-100 rounded-lg p-8 w-full max-w-4xl mx-auto shadow-lg relative max-h-full">
+            <button
+              onClick={toggleFormVisibility}
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+            >
+              &times;
+            </button>
+            <div className="max-h-screen overflow-y-auto p-4 mb-4">
+              <ProductEdit />
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
     </div>
   );
 };

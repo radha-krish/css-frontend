@@ -14,7 +14,14 @@ const checkTokenExpiry = (token) => {
 
 const ProtectedRoute = ({ element: Component, ...rest }) => {
   const token = localStorage.getItem("admin-token");
-  const isLoggedIn = !!token && !checkTokenExpiry(token); // Check if token exists and is not expired
+  const isTokenExpired = !!token && checkTokenExpiry(token);
+
+  // If token is expired, delete it from localStorage
+  if (isTokenExpired) {
+    localStorage.removeItem("admin-token");
+  }
+
+  const isLoggedIn = !!token && !isTokenExpired; // Check if token exists and is not expired
 
   return isLoggedIn ? <Component {...rest} /> : <Navigate to="/admin/login" />;
 };

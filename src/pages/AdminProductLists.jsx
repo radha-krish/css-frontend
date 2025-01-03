@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Navbar from '../components/AdminNavbar';
 
 // StarRating Component
 const StarRating = ({ rating }) => {
@@ -28,13 +29,19 @@ const AdminProductLists = () => {
   const [sortBy, setSortBy] = useState('');
   const [limit, setLimit] = useState('');
   const [category, setCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
+
   const [showModal, setShowModal] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  // const [subcategories,setSubCategories]=useState("");
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `https://css-backend-wvn4.onrender.com/api/admin/products?latest=true&sortBy=${sortBy}&limit=${limit}&type=${category}`
+          `http://localhost:3000/api/admin/products?latest=true&sortBy=${sortBy}&limit=${limit}&category=${category}&subcategory=${subCategory}`
         );
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -49,7 +56,26 @@ const AdminProductLists = () => {
     };
 
     fetchProducts();
-  }, [sortBy, limit, category]);
+  }, [sortBy, limit, category,subCategory]);
+
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/admin/products/categories');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const res = await response.json();
+        setCategories(res.categories); // Update categories state
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to fetch categories. Please try again later.');
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const truncateDescription = (description, length) => {
     if (description.length > length) {
@@ -62,6 +88,12 @@ const AdminProductLists = () => {
     setShowModal(false);
     toast.info('Filters applied.');
   };
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    setSubCategory(''); // Reset subcategory when category changes
+};
+
 
   const removeFilters = () => {
     setSortBy('');
@@ -72,6 +104,8 @@ const AdminProductLists = () => {
   };
 
   return (
+    <div>
+<Navbar/>
     <div className="container mx-auto p-4">
       <ToastContainer />
       <h1 className="text-2xl font-bold mb-4">Product Listing</h1>
@@ -113,18 +147,21 @@ const AdminProductLists = () => {
 
             <div className="mb-4">
               <label className="block mb-2">Category:</label>
-              <select value={category} onChange={(e) => setCategory(e.target.value)} className="p-2 border rounded w-full">
+              <select value={category} onChange={handleCategoryChange} className="p-2 border rounded w-full">
                 <option value="">All Categories</option>
-                <option value="DomeCameras">Dome Cameras</option>
-                <option value="BulletCameras">Bullet Cameras</option>
-                <option value="WeatherproofCameras">Weatherproof Cameras</option>
-                <option value="PTZCameras">PTZ Cameras</option>
-                <option value="NVRSystems">NVR Systems</option>
-                <option value="DVRSystems">DVR Systems</option>
-                <option value="MountsBrackets">Mounts & Brackets</option>
-                <option value="CablesConnectors">Cables & Connectors</option>
-                <option value="CompleteSurveillanceKits">Complete Surveillance Kits</option>
-                <option value="DIYKits">DIY Kits</option>
+                {Object.keys(categories).map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block mb-2">Sub Category:</label>
+              <select value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="p-2 border rounded w-full">
+                <option value="">All Sub Categories</option>
+                {category && categories[category] && categories[category].map((subcat) => (
+                  <option key={subcat} value={subcat}>{subcat}</option>
+                ))}
               </select>
             </div>
 
@@ -154,8 +191,11 @@ const AdminProductLists = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
         {products.map((product) => (
-          <div key={product._id} className="bg-white shadow-md rounded-lg overflow-hidden">
+          <div key={product._id} className="bg-gray-100 shadow-md rounded-lg overflow-hidden">
+           <Link
+                to={`/admin/product/${product._id}`}>
             <img src={product.imageUrls[0]} alt={product.name} className="h-48 w-full object-cover" />
+            </Link>
             <div className="p-4">
               <h2 className="text-lg font-bold"> {truncateDescription(product.name, 16)}</h2>
               <p className="text-gray-700">
@@ -166,7 +206,7 @@ const AdminProductLists = () => {
                 <StarRating rating={product.adminRating} />
               </div>
               <Link
-                to={`/admin/product/${product._id}?type=${product.subcategory}`}
+                to={`/admin/product/${product._id}`}
                 className="block mt-4 text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 View Details
@@ -176,6 +216,8 @@ const AdminProductLists = () => {
         ))}
       </div>
     </div>
+    </div>
+
   );
 };
 
